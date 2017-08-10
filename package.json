@@ -1,7 +1,7 @@
 {
-    "name": "addlabeltoinput",
-    "displayName": "addLabelToInput",
-    "description": "Adds a label to an input field of type checkbox, radio.",
+    "name": "htmlmanipulationtools",
+    "displayName": "HTML manipulation toolset",
+    "description": "For quick manipulation of frequent HTML tasks.",
     "version": "0.0.1",
     "publisher": "itsMeBender",
     "engines": {
@@ -11,14 +11,14 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.htmlManipulationTools"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "extension.htmlManipulationTools",
+                "title": "HTML: manipulation tools"
             }
         ]
     },

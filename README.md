@@ -1,8 +1,31 @@
-# htmlmanipulationtools README
+# HTML manipulation tools README
 
-This is the README for your extension "htmlmanipulationtools". After writing up a brief description, we recommend including the following sections.
+This is the README for extension "htmlmanipulationtools".  
+A selection of functions to manipulate HTML code.
+Originally these where a set of Adobe Dreamweaver commands to manipulate HTML code.
+I used these command scripts to update a lot of very old HTML code.  
+But that was in the old days. I don't like Dreamweaver CC2017 anymore.
+It doesn't fit the way we work anymore as a Front End Developer.
+Today it's all about Web Components, with a very strong reliance on JavaScript.
 
 ## Features
+
+### ArrangeAttributes
+
+__VSC Command 'ArrangeAttributes' to rearrange INPUT element attributes__  
+
+Select an `input` element and this command. And all `input` attributes are rearranged in a fixed order.  
+
+Order of attributes; "id", "name", "value", "type", "disabled", "class", others.
+
+### Textlabel
+
+__VSC Command 'Textlabel' Text to label input element__  
+
+Select text beside an `input` element of type __rabio__ or __checkbox__ and this command.
+The text is transformed into a `label` element, connected by it's neighbour `input` element, connected by attribute _ID_.
+
+++++ TODO: Need to clear up readme ++++
 
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 

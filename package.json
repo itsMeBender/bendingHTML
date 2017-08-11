@@ -2,8 +2,10 @@
     "name": "htmlmanipulationtools",
     "displayName": "HTML manipulation toolset",
     "description": "For quick manipulation of frequent HTML tasks.",
-    "version": "0.0.1",
+    "version": "0.2.0",
     "publisher": "itsMeBender",
+    "author": "Pieter",
+    "license": "MIT",
     "engines": {
         "vscode": "^1.14.0"
     },
@@ -27,6 +29,10 @@
         "compile": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/itsMeBender/bendingHTML.git"
     },
     "devDependencies": {
         "typescript": "^2.0.3",

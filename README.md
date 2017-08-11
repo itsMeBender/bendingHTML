@@ -1,6 +1,6 @@
 # HTML manipulation tools README
 
-This is the README for extension "htmlmanipulationtools".  
+This is the README for extension "bendingHTML".  
 A selection of functions to manipulate HTML code.
 Originally these where a set of Adobe Dreamweaver commands to manipulate HTML code.
 I used these command scripts to update a lot of very old HTML code.  

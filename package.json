@@ -1,5 +1,5 @@
 {
-    "name": "htmlmanipulationtools",
+    "name": "bendinghtml",
     "displayName": "HTML manipulation toolset",
     "description": "For quick manipulation of frequent HTML tasks.",
     "version": "0.2.0",
@@ -13,13 +13,13 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.htmlManipulationTools"
+        "onCommand:extension.bendingHTML"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.htmlManipulationTools",
+                "command": "extension.bendingHTML",
                 "title": "HTML: manipulation tools"
             }
         ]

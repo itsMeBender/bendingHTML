@@ -3,40 +3,41 @@
 //
 
 // The module 'assert' provides assertion methods from node
-import * as assert from 'assert';
+import * as assert from "assert";
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
-import * as vscode from 'vscode';
-import * as myExtension from '../src/extension';
+import * as vscode from "vscode";
+import * as myExtension from "../src/extension";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Extension Tests", () => {
 
     let data;
-    let source = ' this is label text before <input name="_inputName" type="checkbox" class="_inputClass" value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled> this is label text after';
+    let source = ' this is label text before <input name="_inputName" type="checkbox" class="_inputClass"' +
+                 ' value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled> this is label text after';
     let testElements = [
         '<input name="_inputName" type="checkbox" class="_inputClass" value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled>',
-        '<input value="" @[PLACEHOLDER]@ id="_id" disabled name="_inputName" type="checkbox" class="">'
+        '<input value="" @[PLACEHOLDER]@ id="_id" disabled name="_inputName" type="checkbox" class="">',
     ];
 
-    test('A01 - scanElementForAttributes() - Should find all attributes in valid element string.', function() {
+    test("A01 - scanElementForAttributes() - Should find all attributes in valid element string.", function() {
         data = myExtension.scanElementForAttributes(testElements[0]);
-        assert.equal(data.nodename, 'input');
+        assert.equal(data.nodename, "input");
         assert.equal(data.element, testElements[0]);
-        assert.equal(data.attribute.name, '_inputName');
-        assert.equal(data.attribute.type, 'checkbox');
-        assert.equal(data.attribute.class, '_inputClass');
-        assert.equal(data.attribute.value, '_inputValue with some spaces');
-        assert.equal(data.attribute['@[PLACEHOLDER]@'], null);
+        assert.equal(data.attribute.name, "_inputName");
+        assert.equal(data.attribute.type, "checkbox");
+        assert.equal(data.attribute.class, "_inputClass");
+        assert.equal(data.attribute.value, "_inputValue with some spaces");
+        assert.equal(data.attribute["@[PLACEHOLDER]@"], null);
         assert.equal(data.attribute.disabled, null);
     });
 
-    test('A02 - scanElementForAttributes() - Should only find these set of attributes.', function() {
-        var count = 0;
-        var expectedObjectKeys = "attributes element nodename";
-        var expectedAttrKeys = "name type class value @[PLACEHOLDER]@' disabled";
-        var notFound = 0;
+    test("A02 - scanElementForAttributes() - Should only find these set of attributes.", function() {
+        let count = 0;
+        let expectedObjectKeys = "attributes element nodename";
+        let expectedAttrKeys = "name type class value @[PLACEHOLDER]@' disabled";
+        let notFound = 0;
 
         data = myExtension.scanElementForAttributes(testElements[0]);
 
@@ -67,17 +68,17 @@ suite("Extension Tests", () => {
         assert.equal(count, 6);
 
         // Values off attribute keys
-        assert.equal(data.nodename, 'input');
+        assert.equal(data.nodename, "input");
         assert.equal(data.element, testElements[0]);
-        assert.equal(data.attribute.name, '_inputName');
-        assert.equal(data.attribute.type, 'checkbox');
-        assert.equal(data.attribute.class, '_inputClass');
-        assert.equal(data.attribute.value, '_inputValue with some spaces');
-        assert.equal(data.attribute['@[PLACEHOLDER]@'], null);
+        assert.equal(data.attribute.name, "_inputName");
+        assert.equal(data.attribute.type, "checkbox");
+        assert.equal(data.attribute.class, "_inputClass");
+        assert.equal(data.attribute.value, "_inputValue with some spaces");
+        assert.equal(data.attribute["@[PLACEHOLDER]@"], null);
         assert.equal(data.attribute.disabled, null);
     });
 
-    test('B01 - addClassString() - Should ADD a class to Class string.', function() {
+    test("B01 - addClassString() - Should ADD a class to Class string.", function() {
         // Empty
         data = myExtension.addClassString("", "testclass");
         assert.equal(data, "testclass");
@@ -109,7 +110,7 @@ suite("Extension Tests", () => {
         assert.equal(data, "more classes and SupertestclassSuper within testclass");
     });
 
-    test('C01 - removeClassString() - Should REMOVE a class from a Class string.', function() {   
+    test("C01 - removeClassString() - Should REMOVE a class from a Class string.", function() {
         data = myExtension.removeClassString("testclass", "testclass");
         assert.equal(data, "");
 
@@ -129,9 +130,9 @@ suite("Extension Tests", () => {
         assert.equal(data, "");
     });
 
-    test('D01 - buildElementString() - Should build a element string from an given object.', function() {
+    test("D01 - buildElementString() - Should build a element string from an given object.", function() {
         // FIXED Sequence ["id", "name", "value", "type", "disabled", "class"];
-        var reformedElement = [
+        let reformedElement = [
         '<input name="_inputName" value="_inputValue with some spaces" type="checkbox" disabled class="_inputClass" @[PLACEHOLDER]@>',
         '<input id="_id" name="_inputName" value="" type="checkbox" disabled class="" @[PLACEHOLDER]@>'];
 

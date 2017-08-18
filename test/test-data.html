@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<!-- See https://code.visualstudio.com/docs/extensions/testing-extensions -->
+<head>
+<meta charset='utf-8'>
+<title>Extension test page</title>
+</head>
+<body>
+<h1>A page containing test elements.</h1>
+
+<!-- The ++...++ MARKER is use to find and identify selectable text, to be converted by functions. -->
+
+<div id="testBlock1">
+    <input name="test1" value="A" type="radio"> ++This is label text A++
+</div>
+
+<div id="testBlock2">
+    ++This is label text B++<input value="B" type="radio" name="test2">
+</div>
+
+<div id="testBlock3">
+    <input type="checkbox" value="C" name="test3" disabled data-my-stuff="data-attribute">++This is label text C++
+</div>
+    
+<div id="testBlock4">
+    ++This is label text D++ <input class="a--css--class" type="checkbox" name="test4" value="D">
+</div>
+    
+</body>
+</html>

@@ -1,44 +1,48 @@
 {
-    "name": "bendinghtml",
-    "displayName": "HTML manipulation toolset",
-    "description": "For quick manipulation of frequent HTML tasks.",
-    "version": "0.2.0",
-    "publisher": "itsMeBender",
-    "author": "Pieter",
-    "license": "MIT",
-    "engines": {
-        "vscode": "^1.14.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCommand:extension.bendingHTML"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "extension.bendingHTML",
-                "title": "HTML: manipulation tools"
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/itsMeBender/bendingHTML.git"
-    },
-    "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
-        "mocha": "^2.3.3",
-        "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
-    }
+  "name": "bendinghtml",
+  "displayName": "HTML manipulation toolset",
+  "description": "For quick manipulation of frequent HTML tasks.",
+  "version": "0.2.0",
+  "publisher": "itsMeBender",
+  "author": "Pieter",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.14.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:extension.bendingHTML"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.bendingHTML",
+        "title": "HTML: manipulation tools"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsMeBender/bendingHTML.git"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^6.0.87",
+    "copyfiles": "^1.2.0",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-typescript": "^3.2.1",
+    "mocha": "^2.3.3",
+    "typescript": "^2.5.0",
+    "vscode": "^1.0.0"
+  }
 }

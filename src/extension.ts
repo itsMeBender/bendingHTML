@@ -34,11 +34,11 @@ import Window = vscode.window;
  * @param {String} direction of the search; AFTER, BEFORE of given `pos`
  * @return {Range} the code text range of the fount element, or `null` when not found.
  */
-function searchNeighborElement (e: TextEditor, d: TextDocument, sel: Selection[], search: string): Range {
+export function searchNeighborElement (e: TextEditor, d: TextDocument, sel: Selection[], nodeName: string): Range {
     let attr: ElementAttributes;
     let charNo: number = sel[0].start.character;
     // http://haacked.com/archive/2004/10/25/usingregularexpressionstomatchhtml.aspx/
-    let html: RegExp = /<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[\^'">\s]+))?)+\s*|\s*)\/?>/g;
+    let html: RegExp = /<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[\^'">\s]+))?)+\s*|\s*)\/?>/g; // Does not recognize @[PLACEHOLDER]@
     let idx: number;
     let line: TextLine;
     let lineNo: number = sel[0].start.line;
@@ -51,7 +51,7 @@ function searchNeighborElement (e: TextEditor, d: TextDocument, sel: Selection[]
         if (match.length) {
             for (idx = 0 ; idx < match.length; idx += 1) {
                 attr = scanElementForAttributes(match[idx]);
-                if (search === attr.nodename) {
+                if (nodeName === attr.nodename) {
                     charNo = line.text.indexOf(match[idx]);
                     return new Range(
                         new Position(lineNo + neighbour, charNo),
@@ -176,19 +176,6 @@ export function buildElementString(elementAttributes: ElementAttributes): string
         }
     });
 
-    // The rest of the attribute pack
-    if (!Object.keys) {
-        // DreamWeaver internal JS, does not support Object.keys();
-        let key: any;
-        for (key in elementAttributes.attribute) {
-            if (elementAttributes.attribute.hasOwnProperty(key)) {
-                polyfil.push(key);
-            }
-        }
-    } else {
-        polyfil = Object.keys(elementAttributes.attribute);
-    }
-
     polyfil.forEach(attribute => {
         if (attributeSeq.indexOf(attribute) === -1) {
             // Not in attributeSeq FIX list, so add it at the end.
@@ -231,11 +218,17 @@ export function convertTextToLabelElement (e: TextEditor, d: TextDocument, sel: 
             if (inputRange) {
                 inputSource = d.getText(inputRange);
                 inputObj = scanElementForAttributes(inputSource);
-                console.log(inputSource);
+
                 // Assure INPUT has an ID to link the LABEL to.
                 if (!inputObj.attribute.hasOwnProperty("id")) {
                     inputObj.attribute.id = inputObj.attribute.name + "_" + inputObj.attribute.value;
                 }
+
+                // If 'type'-attribute is CHECKBOX, we can add class 'css-checkbox-symbol'.
+                if (inputObj.attribute.type === "checkbox") {
+                    inputObj.attribute.class = addClassString(inputObj.attribute.class, "css-checkbox-symbol");
+                }
+
                 // Replace selected text in labelElement container
                 labelElement = labelElement.replace(/REPLACE-LABELTEXT/g, labelSource);
                 labelElement = labelElement.replace(/REPLACE-INPUTID/g, inputObj.attribute.id);
@@ -248,8 +241,6 @@ export function convertTextToLabelElement (e: TextEditor, d: TextDocument, sel: 
     } else {
         vscode.window.showInformationMessage("First select text next to input element");
     }
-
-    console.log("convertTextToLabelElement()");
 }
 
 /**

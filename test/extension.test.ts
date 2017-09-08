@@ -10,25 +10,39 @@ import * as assert from "assert";
 import * as vscode from "vscode";
 import * as myExtension from "../src/extension";
 
+import Document = vscode.TextDocument;
+import Position = vscode.Position;
+import Range = vscode.Range;
+import Selection = vscode.Selection;
+import TextEditor = vscode.TextEditor;
+import TextLine = vscode.TextLine;
+import Window = vscode.window;
+
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Extension Tests", () => {
 
     let data;
     let source = ' this is label text before <input name="_inputName" type="checkbox" class="_inputClass"' +
-                 ' value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled> this is label text after';
+    ' value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled> this is label text after';
     let testElements = [
-        '<input name="_inputName" type="checkbox" class="_inputClass" value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled>',
-        '<input value="" @[PLACEHOLDER]@ id="_id" disabled name="_inputName" type="checkbox" class="">',
+        '<input name="_inputNameA" type="radio" class="_inputClass" value="_inputValueA with some spaces" @[PLACEHOLDER]@ disabled>',
+        '<input value="" @[PLACEHOLDER]@ id="_id" disabled name="_inputNameB" type="radio" class="">',
+        '<input name="_inputNameC" type="checkbox" class="_inputClass" value="_inputValue with some spaces" @[PLACEHOLDER]@ disabled>',
+        '<input value="" @[PLACEHOLDER]@ id="_id" disabled name="_inputNameD" type="checkbox" class="">',
     ];
+
+    let e = Window.activeTextEditor;
+    let d = e.document;
+    // let sel = e.selections;
 
     test("A01 - scanElementForAttributes() - Should find all attributes in valid element string.", function() {
         data = myExtension.scanElementForAttributes(testElements[0]);
         assert.equal(data.nodename, "input");
         assert.equal(data.element, testElements[0]);
-        assert.equal(data.attribute.name, "_inputName");
-        assert.equal(data.attribute.type, "checkbox");
+        assert.equal(data.attribute.name, "_inputNameA");
+        assert.equal(data.attribute.type, "radio");
         assert.equal(data.attribute.class, "_inputClass");
-        assert.equal(data.attribute.value, "_inputValue with some spaces");
+        assert.equal(data.attribute.value, "_inputValueA with some spaces");
         assert.equal(data.attribute["@[PLACEHOLDER]@"], null);
         assert.equal(data.attribute.disabled, null);
     });
@@ -70,10 +84,10 @@ suite("Extension Tests", () => {
         // Values off attribute keys
         assert.equal(data.nodename, "input");
         assert.equal(data.element, testElements[0]);
-        assert.equal(data.attribute.name, "_inputName");
-        assert.equal(data.attribute.type, "checkbox");
+        assert.equal(data.attribute.name, "_inputNameA");
+        assert.equal(data.attribute.type, "radio");
         assert.equal(data.attribute.class, "_inputClass");
-        assert.equal(data.attribute.value, "_inputValue with some spaces");
+        assert.equal(data.attribute.value, "_inputValueA with some spaces");
         assert.equal(data.attribute["@[PLACEHOLDER]@"], null);
         assert.equal(data.attribute.disabled, null);
     });
@@ -130,16 +144,106 @@ suite("Extension Tests", () => {
         assert.equal(data, "");
     });
 
-    test("D01 - buildElementString() - Should build a element string from an given object.", function() {
-        // FIXED Sequence ["id", "name", "value", "type", "disabled", "class"];
-        let reformedElement = [
-        '<input name="_inputName" value="_inputValue with some spaces" type="checkbox" disabled class="_inputClass" @[PLACEHOLDER]@>',
-        '<input id="_id" name="_inputName" value="" type="checkbox" disabled class="" @[PLACEHOLDER]@>'];
+    test("D01 - searchNeighborElement() - Should find TestBlock1 input with label text after", function() {
+        let labelSelection: Selection;
+        let line;
+        let range: Range;
+        let testLineNo: number;
 
-        data = myExtension.buildElementString(myExtension.scanElementForAttributes(testElements[0]));
-        assert.equal(data, reformedElement[0]);
+        // Locate FILE test string `<input name="test1" value="A" type="radio"> ++This is label text A++`
+        testLineNo = 13;
+        line = d.lineAt(testLineNo); // Start counting from 0.
+        labelSelection = new Selection(
+            new Position(testLineNo, line.text.indexOf("++")),
+            new Position(testLineNo, line.text.lastIndexOf("++") + 2),
+        );
 
-        data = myExtension.buildElementString(myExtension.scanElementForAttributes(testElements[1]));
-        assert.equal(data, reformedElement[1]);
+        range = myExtension.searchNeighborElement(e, d, [labelSelection], "input");
+        assert.equal(range.start.line, 13);
+        assert.equal(range.start.character, 4);
+        assert.equal(range.end.character, 47);
     });
+
+    test("D02 - searchNeighborElement() - Should find TestBlock2 input with label text before", function() {
+        let labelSelection: Selection;
+        let line;
+        let range: Range;
+        let testLineNo: number;
+
+        // Locate FILE test string `++This is label text B++<input value="B" type="radio" name="test2">`
+        testLineNo = 17;
+        line = d.lineAt(testLineNo); // Start counting from 0.
+        labelSelection = new Selection(
+            new Position(testLineNo, line.text.indexOf("++")),
+            new Position(testLineNo, line.text.lastIndexOf("++") + 2),
+        );
+
+        range = myExtension.searchNeighborElement(e, d, [labelSelection], "input");
+        assert.equal(range.start.line, testLineNo);
+        assert.equal(range.start.character, 28);
+        assert.equal(range.end.character, 71);
+    });
+
+    test("D03 - searchNeighborElement() - Implement label-element for TestBlock3", function(done) {
+        let labelSelection: Selection;
+        let line;
+        let range: Range;
+        let testLineNo: number;
+
+        // Locate FILE test string `++This is label text B++<input value="B" type="radio" name="test2">`
+        testLineNo = 21;
+        line = d.lineAt(testLineNo); // Start counting from 0.
+        labelSelection = new Selection(
+            new Position(testLineNo, line.text.indexOf("++")),
+            new Position(testLineNo, line.text.lastIndexOf("++") + 2),
+        );
+
+        range = myExtension.searchNeighborElement(e, d, [labelSelection], "input");
+        assert.equal(range.start.line, testLineNo);
+        assert.equal(range.start.character, 4);
+        assert.equal(range.end.character, 90);
+
+        myExtension.convertTextToLabelElement (e, d, [labelSelection]);
+
+        // Give the editor 'E', some time to perform the replace label text action.
+        setTimeout(function() {
+            line = d.lineAt(testLineNo); // Getting the actual CHANGED state of the line
+            assert.equal(line.text,
+                '    <input id="test3_C" name="test3" value="C" type="checkbox" disabled class="css-checkbox-symbol">' +
+                '<label for="test3_C">++This is label text C++</label>');
+            done();
+        }, 500);
+    });
+
+    test("D04 - searchNeighborElement() - Implement label-element for TestBlock4, with own ID", function(done) {
+        let labelSelection: Selection;
+        let line;
+        let range: Range;
+        let testLineNo: number;
+
+        // Locate FILE test string `++This is label text B++<input value="B" type="radio" name="test2">`
+        testLineNo = 25;
+        line = d.lineAt(testLineNo); // Getting the actual CHANGED state of the line
+        labelSelection = new Selection(
+            new Position(testLineNo, line.text.indexOf("++")),
+            new Position(testLineNo, line.text.lastIndexOf("++") + 2),
+        );
+
+        range = myExtension.searchNeighborElement(e, d, [labelSelection], "input");
+        assert.equal(range.start.line, testLineNo);
+        assert.equal(range.start.character, 29);
+        assert.equal(range.end.character, 109);
+
+        myExtension.convertTextToLabelElement (e, d, [labelSelection]);
+
+        // Give the editor 'E', some time to perform the replace label text action.
+        setTimeout(function() {
+            line = d.lineAt(testLineNo); // Start counting from 0.
+            assert.equal(line.text,
+                '    <label for="reused">++This is label text D++</label> ' +
+                '<input id="reused" name="test4" value="D" type="checkbox" class="a--css--class css-checkbox-symbol">');
+            done();
+        }, 500);
+    });
+
 });
